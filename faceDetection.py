@@ -6,6 +6,7 @@
 # import statements
 import cv2 as cv
 import os
+import sys
 
 # draws rectangles in given color around detected features in given frame
 def drawFeatures(frame, features, color):
@@ -14,8 +15,7 @@ def drawFeatures(frame, features, color):
                                 color=color, thickness=2)
 
 # returns detected face features in face region of frame
-def findFeatures(grayFrame, faces, featureCascade, scaleFactor=1.3, 
-                                    minNeighbors=5, minSize=(0, 0)):
+def findFeatures(grayFrame, faces, featureCascade, scaleFactor=1.3, minNeighbors=5, minSize=(0, 0)):
     featuresFinal = []
 
     for (x, y, w, h) in faces:
@@ -33,13 +33,17 @@ def findFeatures(grayFrame, faces, featureCascade, scaleFactor=1.3,
 
 # creates folder if path does not exist
 def checkDirectory(path):
-    if os.path.exists(path)==False:
+    if not os.path.exists(path):
         os.makedirs(path)
         print("Creating", path)
 
 # main function
-def main():
-    capdev = cv.VideoCapture(0, cv.CAP_DSHOW)
+def main(argv):
+
+    if len(argv) > 1 and argv[1] == '-m':
+        capdev = cv.VideoCapture(0)
+    else:
+        capdev = cv.VideoCapture(0, cv.CAP_DSHOW)
 
     if not capdev.isOpened():
         print("Error: unable to open camera")
@@ -54,8 +58,8 @@ def main():
     userID = ""
     imageCount = 1
 
-    # video stream
-    while(1):
+    # video stream, quits if user presses q
+    while key != ord('q'):
         # captures frame
         ret, frame = capdev.read()
 
@@ -69,7 +73,8 @@ def main():
         # finds features // note: scale factors, min neighbors, and min size may need
         #                // adjustment to optimize detection
         faces = faceCascade.detectMultiScale(grayFrame, scaleFactor=1.3,
-                                            minNeighbors=5, minSize=(30,30))
+                                            minNeighbors=5, minSize=(30, 30))
+        print(faces)
         eyes = findFeatures(grayFrame, faces, eyeCascade, scaleFactor=1.3, 
                                             minNeighbors=3, minSize=(3, 3))
         smile = findFeatures(grayFrame, faces, smileCascade, scaleFactor=2, 
@@ -104,10 +109,6 @@ def main():
                 cv.imwrite(path, grayFrame[y:y+h, x:x+w])
                 imageCount += 1
 
-        # quits if user presses q
-        elif key == ord('q'):
-            break        
-
     # end video stream
     capdev.release() 
     cv.destroyAllWindows()
@@ -116,4 +117,4 @@ def main():
 
 # runs code only if in file
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
