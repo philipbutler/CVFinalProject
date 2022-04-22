@@ -7,6 +7,7 @@
 import cv2 as cv
 import os
 import sys
+import FaceNetwork
 
 # draws rectangles in given color around detected features in given frame
 def drawFeatures(frame, features, color):
@@ -39,9 +40,9 @@ def checkDirectory(path):
 
 # main function
 def main(argv):
-
-    if len(argv) > 1 and argv[1] == '-m':
-        capdev = cv.VideoCapture(0)
+    print(argv)
+    if len(argv) > 1 and argv[1] == 'mac':
+        capdev = cv.VideoCapture(1) if (len(argv) > 2 and argv[2] == 'webcam') else cv.VideoCapture(0)
     else:
         capdev = cv.VideoCapture(0, cv.CAP_DSHOW)
 
@@ -59,6 +60,7 @@ def main(argv):
     imageCount = 1
 
     # video stream, quits if user presses q
+    key = cv.waitKey(1)
     while key != ord('q'):
         # captures frame
         ret, frame = capdev.read()
@@ -74,7 +76,6 @@ def main(argv):
         #                // adjustment to optimize detection
         faces = faceCascade.detectMultiScale(grayFrame, scaleFactor=1.3,
                                             minNeighbors=5, minSize=(30, 30))
-        print(faces)
         eyes = findFeatures(grayFrame, faces, eyeCascade, scaleFactor=1.3, 
                                             minNeighbors=3, minSize=(3, 3))
         smile = findFeatures(grayFrame, faces, smileCascade, scaleFactor=2, 
