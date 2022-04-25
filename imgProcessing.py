@@ -52,7 +52,6 @@ def load_img(filepath, labels, size):
         # append the img data
         for img in all_img:
             current_img_path = current_path + '/' + img
-            print(current_img_path)
             current_img = cv2.imread(current_img_path)
             processed_img = img_process(current_img, size)
             all_data.append(processed_img)
@@ -94,8 +93,8 @@ def train_test_split(data_set, label_set, ratio=0.2):
 
 # save the data and labels to npz file
 def save_data(train_data, train_label, test_data, test_label):
-    np.savez('processedData/train_data.npz', train_data=train_data, train_label=train_label)
-    np.savez('processedData/test_data.npz', test_data=test_data, test_label=test_label)
+    np.savez('train_data.npz', train_data=train_data, train_label=train_label)
+    np.savez('test_data.npz', test_data=test_data, test_label=test_label)
     return
 
 
