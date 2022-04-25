@@ -93,8 +93,8 @@ def train_test_split(data_set, label_set, ratio=0.2):
 
 # save the data and labels to npz file
 def save_data(train_data, train_label, test_data, test_label):
-    np.savez('train_data.npz', train_data=train_data, train_label=train_label)
-    np.savez('test_data.npz', test_data=test_data, test_label=test_label)
+    np.savez('processedData/train_data.npz', train_data=train_data, train_label=train_label)
+    np.savez('processedData/test_data.npz', test_data=test_data, test_label=test_label)
     return
 
 
