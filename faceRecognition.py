@@ -35,9 +35,6 @@ def main():
     # loads in training and test data
     trainData, testData = loadData("processedData/")
 
-    # path for image database
-    dirPath = "dataset/"
-
     # create and train network
     recognizer = cv.face.LBPHFaceRecognizer_create() # if not installed already, run the command (python -m pip install --user opencv-contrib-python)
     recognizer.train(trainData["train_data"], trainData["train_label"])
