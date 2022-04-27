@@ -53,6 +53,9 @@ def main():
         "cascades/haarcascade_eye_tree_eyeglasses.xml")
     smileCascade = cv.CascadeClassifier("cascades/haarcascade_smile.xml")
 
+    # load filter
+    filter, ori_filter_h, ori_filter_w, mask, mask_inv = loadFilter()
+
     # used for saving images
     userID = ""
     imageCount = 1
@@ -83,8 +86,6 @@ def main():
         drawFeatures(frame, eyes, (0, 255, 0))
         drawFeatures(frame, smile, (0, 0, 255))
 
-        cv.imshow("Video", frame)
-
         # key commands
         key = cv.waitKey(1)
 
@@ -107,13 +108,14 @@ def main():
                 cv.imwrite(path, grayFrame[y:y + h, x:x + w])
                 imageCount += 1
 
-        # switch to filter mode
-        if key == ord('w'):
-            filters(faces)
-
         # quits if user presses q
         elif key == ord('q'):
             break
+
+        # switch to filter mode
+        # filters(frame, faces, filter, ori_filter_h,
+                # ori_filter_w, mask, mask_inv)
+        cv.imshow("Video", frame)
 
     # end video stream
     capdev.release()
