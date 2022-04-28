@@ -2,13 +2,13 @@
 import cv2 as cv
 
 # initial filter parameters
-# filter_path = 'filters/witch.png'
-filter_path = 'filters/pikachu_filter-01.png'
+filter_path = 'filters/witch.png'
+# filter_path = 'filters/pikachu_filter-01.png'
 
 
 # load filter and get masks
 def loadFilter():
-    filter = cv.imread(filter_path, cv.IMREAD_UNCHANGED)
+    filter = cv.imread(filter_path)
 
     filter_gray = cv.cvtColor(filter, cv.COLOR_BGR2GRAY)
     ori_filter_h, ori_filter_w, filter_channels = filter.shape
@@ -18,22 +18,20 @@ def loadFilter():
     ret, mask = cv.threshold(filter_gray, 10, 255, cv.THRESH_BINARY_INV)
 
     mask_inv = cv.bitwise_not(mask)
-    
+
+    # work in progress
     # mask = cv.threshold(filter[:, :, 2], 0, 255, cv.THRESH_BINARY)[1]
-
     # trans_mask = filter[:, :, 2] == 255
-
     # cv.imshow("trans", filter[trans_mask])
-
-    cv.imshow("gray", filter_gray)
-    cv.imshow("mask", mask)
-    cv.imshow("inv", mask_inv)
+    # cv.imshow("gray", filter_gray)
+    # cv.imshow("mask", mask)
+    # cv.imshow("inv", mask_inv)
 
     return filter, ori_filter_h, ori_filter_w, mask, mask_inv
 
+
 # apply filter to face region
 def filters(frame, faces, filter, ori_filter_h, ori_filter_w, mask, mask_inv):
-
     # loop through every face found
     for (x, y, w, h) in faces:
         # get coordinates of 4 corners, and w & h
@@ -53,7 +51,7 @@ def filters(frame, faces, filter, ori_filter_h, ori_filter_w, mask, mask_inv):
         filter_x1 = face_x2 - int(face_w / 2) - int(filter_width / 2)
         filter_x2 = filter_x1 + filter_width
         # face's upper left -> filter's upper left, adjustable factor
-        filter_y1 = face_y1 - int(face_h * 1.26)
+        filter_y1 = face_y1 - int(face_h * 1.3)
         filter_y2 = filter_y1 + filter_height
 
         # check boundaries

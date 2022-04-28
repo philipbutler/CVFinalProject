@@ -4,9 +4,18 @@
 # Haar Cascade Face detection
 
 # import statements
+from statistics import mode
 import cv2 as cv
 import os
+from enum import Enum
 from filters import *
+
+class Mode(Enum):
+    NORMAL = 1
+    FILTER = 2
+
+
+mode = Mode.NORMAL
 
 # draws rectangles in given color around detected features in given frame
 def drawFeatures(frame, features, color):
@@ -46,6 +55,9 @@ def main():
         print("Error: unable to open camera")
         exit()
 
+    # reference global variable
+    global mode
+
     # load pre-trained classifier from OpenCV directory (https://github.com/opencv/opencv/tree/master/data/haarcascades)
     faceCascade = cv.CascadeClassifier(
         "cascades/haarcascade_frontalface_default.xml")
@@ -81,13 +93,24 @@ def main():
         smile = findFeatures(grayFrame, faces, smileCascade, scaleFactor=2,
                              minNeighbors=30, minSize=(50, 50))
 
-        # draws features on frame
-        drawFeatures(frame, faces, (255, 0, 0))
-        drawFeatures(frame, eyes, (0, 255, 0))
-        drawFeatures(frame, smile, (0, 0, 255))
-
         # key commands
         key = cv.waitKey(1)
+
+        if key == ord('f'):
+            mode = Mode.FILTER
+        if key == ord('n'):
+            mode = Mode.NORMAL
+
+        # draws features on frame
+        if len(faces) > 0 and mode == Mode.NORMAL:
+            drawFeatures(frame, faces, (255, 0, 0))
+            drawFeatures(frame, eyes, (0, 255, 0))
+            drawFeatures(frame, smile, (0, 0, 255))
+
+        # switch to filter mode
+        if len(faces) > 0 and mode == Mode.FILTER:
+            filters(frame, faces, filter, ori_filter_h,
+                    ori_filter_w, mask, mask_inv)
 
         # saves face region of original image if user presses s
         if key == ord('s'):
@@ -112,9 +135,6 @@ def main():
         elif key == ord('q'):
             break
 
-        # switch to filter mode
-        # filters(frame, faces, filter, ori_filter_h,
-                # ori_filter_w, mask, mask_inv)
         cv.imshow("Video", frame)
 
     # end video stream
