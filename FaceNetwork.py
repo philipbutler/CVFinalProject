@@ -18,7 +18,7 @@ import imgProcessing
 # class definitions, create the neural network
 class FaceNetwork(nn.Module):
     # initialize the network
-    # input size (1, 100, 100)
+    # input size (1, 101, 101)
     def __init__(self):
         super().__init__()
         # build layers
