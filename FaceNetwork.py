@@ -104,9 +104,9 @@ def train_network(model, epochs, batch, batch_sz, train_loader, test_loader):
             optimizer.step()
             running_loss += loss.item()
 
-            print(f'[{epoch + 1}, {i + 1:5d}] train loss: {running_loss / 100:.3f}')
+            print(f'[{epoch + 1}, {i + 1:5d}] train loss: {running_loss / batch_sz:.3f}')
             print(f'[{epoch + 1}, {i + 1:5d}] train accuracy: {correct_count * 1.0 / total_count:.3f}')
-            train_loss.append(running_loss / 100)
+            train_loss.append(running_loss / batch_sz)
             train_acc.append(correct_count * 1.0 / total_count)
             running_loss = 0.0
 
@@ -123,9 +123,9 @@ def train_network(model, epochs, batch, batch_sz, train_loader, test_loader):
         correct_count += (prediction == test_label).sum()
         running_loss_test += loss.item()
 
-        print(f'[{epoch + 1}, {i + 1:5d}] test loss: {running_loss_test / 100:.3f}')
+        print(f'[{epoch + 1}, {i + 1:5d}] test loss: {running_loss_test / test_data.data.size()[0]:.3f}')
         print(f'[{epoch + 1}, {i + 1:5d}] test accuracy: {correct_count * 1.0 / total_count:.3f}')
-        test_loss.append(running_loss_test / 100)
+        test_loss.append(running_loss_test / test_data.data.size()[0])
         test_acc.append(correct_count * 1.0 / total_count)
         running_loss_test = 0.0
 
