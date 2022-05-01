@@ -5,6 +5,16 @@ import cv2 as cv
 # filter_path = 'filters/witch.png'
 filter_path = 'filters/pikachu_filter.png'
 
+# switch case to get specific height and width parameters for filters
+def getFilterParameters(classifer):
+    match classifer:
+        case 'jp':
+            return 2.0, 1.3
+        case 'changling':
+            return 1.82, 0.4
+        case _:
+            return 2.0, 1.3
+
 
 # load filter and get masks
 def loadFilter():
@@ -49,9 +59,8 @@ def filters(frame, faces, filter, ori_filter_h, ori_filter_w, mask, mask_inv):
         # same proportion
         filter_height = int(filter_width * (ori_filter_h / ori_filter_w))
 
-        # switch case, 1.3
-        height_factor = 0.4
-        width_factor = 1.82  # 2.0
+        # switch case
+        width_factor, height_factor = getFilterParameters('jp')
 
         # get center of face, deducted by half of filter width
         filter_x1 = face_x2 - int(face_w / 2) - \
