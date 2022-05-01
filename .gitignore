@@ -6,3 +6,6 @@ CVFinalProject/CVFinalProject.xcodeproj/project.xcworkspace/xcshareddata/IDEWork
 CVFinalProject/CVFinalProject.xcodeproj/project.xcworkspace/xcuserdata/philipbutler.xcuserdatad/UserInterfaceState.xcuserstate
 CVFinalProject/CVFinalProject.xcodeproj/xcuserdata/philipbutler.xcuserdatad/xcschemes/xcschememanagement.plist
 CVFinalProject/main.cpp
+
+__pycache__
+.vscode
