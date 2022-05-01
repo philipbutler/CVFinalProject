@@ -6,8 +6,6 @@ import glob
 # filter_path = 'filters/witch.png'
 # filter_path = 'filters/pikachu_filter.png'
 
-filter_dir = 'filters/*.png'
-
 
 # filter class
 class Filter:
@@ -18,23 +16,29 @@ class Filter:
         self.mask = mask
         self.mask_inv = mask_inv
 
+    # getters
+    def getFilterPackage(self):
+        return self.filter, self.ori_filter_h, self.ori_filter_w, self.mask, self.mask_inv
 
 # switch case to get specific height and width parameters for filters
 def getFilterParameters(classifer):
     match classifer:
-        case 'witch':
-            return 2.0, 1.3
-        case 'pikachu':
+        # pikachu
+        case 0:
             return 1.82, 0.4
-        case _:
+        # witch
+        case 1:
             return 2.0, 1.3
+        case _:
+            return 1.82, 0.4
 
 
 # load filter and get masks
 def loadFilters():
+    filter_dir = glob.glob('filters/*.png')
     filters = []
-    
-    for filter_path in filter_dir:  
+
+    for filter_path in filter_dir:
         filter = cv.imread(filter_path)
         filter_unchanged = cv.imread(filter_path, cv.IMREAD_UNCHANGED)
 
@@ -56,14 +60,19 @@ def loadFilters():
         # cv.imshow("mask", mask)
         # cv.imshow("inv", mask_inv)
 
-        filter_curr = Filter(filter, ori_filter_h, ori_filter_w, mask, mask_inv)
+        filter_curr = Filter(filter, ori_filter_h,
+                             ori_filter_w, mask, mask_inv)
         filters.append(filter_curr)
-    
+
     return filters
 
 
 # apply filter to face region
-def filters(frame, faces, filter, ori_filter_h, ori_filter_w, mask, mask_inv):
+def applyFilter(frame, faces, filters, counter):
+    # getters
+    curr_filter = filters[counter % len(filters)]
+    filter, ori_filter_h, ori_filter_w, mask, mask_inv = curr_filter.getFilterPackage()
+
     # loop through every face found
     for (x, y, w, h) in faces:
         # get coordinates of 4 corners, and w & h
@@ -80,7 +89,7 @@ def filters(frame, faces, filter, ori_filter_h, ori_filter_w, mask, mask_inv):
         filter_height = int(filter_width * (ori_filter_h / ori_filter_w))
 
         # switch case
-        width_factor, height_factor = getFilterParameters('jp')
+        width_factor, height_factor = getFilterParameters(counter % len(filters))
 
         # get center of face, deducted by half of filter width
         filter_x1 = face_x2 - int(face_w / 2) - \

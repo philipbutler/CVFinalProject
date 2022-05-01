@@ -75,7 +75,10 @@ def main(argv):
     smileCascade = cv.CascadeClassifier("cascades/haarcascade_smile.xml")
 
     # load filter
-    filter, ori_filter_h, ori_filter_w, mask, mask_inv = loadFilters()
+    filters = loadFilters()
+    print(len(filters))
+    cv.imshow("1", filters[0].filter)
+    cv.imshow("2", filters[1].filter)
 
     # used for saving images
     userID = ""
@@ -122,8 +125,7 @@ def main(argv):
 
         # switch to filter mode
         if len(faces) > 0 and mode == Mode.FILTER:
-            filters(frame, faces, filter, ori_filter_h,
-                    ori_filter_w, mask, mask_inv)
+            applyFilter(frame, faces, filters, counter)
 
         # saves face region of original image if user presses s
         if key == ord('s'):
