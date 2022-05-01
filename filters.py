@@ -1,45 +1,65 @@
 # import statements
 import cv2 as cv
+import glob
 
 # initial filter parameters
 # filter_path = 'filters/witch.png'
-filter_path = 'filters/pikachu_filter.png'
+# filter_path = 'filters/pikachu_filter.png'
+
+filter_dir = 'filters/*.png'
+
+
+# filter class
+class Filter:
+    def __init__(self, filter, ori_filter_h, ori_filter_w, mask, mask_inv) -> None:
+        self.filter = filter
+        self.ori_filter_h = ori_filter_h
+        self.ori_filter_w = ori_filter_w
+        self.mask = mask
+        self.mask_inv = mask_inv
+
 
 # switch case to get specific height and width parameters for filters
 def getFilterParameters(classifer):
     match classifer:
-        case 'jp':
+        case 'witch':
             return 2.0, 1.3
-        case 'changling':
+        case 'pikachu':
             return 1.82, 0.4
         case _:
             return 2.0, 1.3
 
 
 # load filter and get masks
-def loadFilter():
-    filter = cv.imread(filter_path)
-    filter_unchanged = cv.imread(filter_path, cv.IMREAD_UNCHANGED)
+def loadFilters():
+    filters = []
+    
+    for filter_path in filter_dir:  
+        filter = cv.imread(filter_path)
+        filter_unchanged = cv.imread(filter_path, cv.IMREAD_UNCHANGED)
 
-    # filter mask
-    # filter_gray = cv.cvtColor(filter, cv.COLOR_BGR2GRAY)
-    ori_filter_h, ori_filter_w, filter_channels = filter.shape
+        # filter mask
+        # filter_gray = cv.cvtColor(filter, cv.COLOR_BGR2GRAY)
+        ori_filter_h, ori_filter_w, filter_channels = filter.shape
 
-    # cv.THRESH_BINARY_INV for png transparent background, cv.THRESH_BINARY for white background
-    # ret, mask = cv.threshold(filter_gray, 10, 255, cv.THRESH_BINARY_INV)
+        # cv.THRESH_BINARY_INV for png transparent background, cv.THRESH_BINARY for white background
+        # ret, mask = cv.threshold(filter_gray, 10, 255, cv.THRESH_BINARY_INV)
 
-    # Reference - https://stackoverflow.com/questions/48816703/opencv-turn-transparent-part-of-png-white
-    ret, mask = cv.threshold(
-        filter_unchanged[:, :, 3], 10, 255, cv.THRESH_BINARY_INV)
-    mask_inv = cv.bitwise_not(mask)
+        # Reference - https://stackoverflow.com/questions/48816703/opencv-turn-transparent-part-of-png-white
+        ret, mask = cv.threshold(
+            filter_unchanged[:, :, 3], 10, 255, cv.THRESH_BINARY_INV)
+        mask_inv = cv.bitwise_not(mask)
 
-    # work in progress
-    # cv.imshow("trans", filter[trans_mask])
-    # cv.imshow("gray", filter_gray)
-    # cv.imshow("mask", mask)
-    # cv.imshow("inv", mask_inv)
+        # work in progress
+        # cv.imshow("trans", filter[trans_mask])
+        # cv.imshow("gray", filter_gray)
+        # cv.imshow("mask", mask)
+        # cv.imshow("inv", mask_inv)
 
-    return filter, ori_filter_h, ori_filter_w, mask, mask_inv
+        filter_curr = Filter(filter, ori_filter_h, ori_filter_w, mask, mask_inv)
+        filters.append(filter_curr)
+    
+    return filters
 
 
 # apply filter to face region
