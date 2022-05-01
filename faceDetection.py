@@ -3,7 +3,7 @@
 # Final Project
 # Haar Cascade Face detection
 
-# import statements
+# import statements 
 import cv2 as cv
 import os
 
