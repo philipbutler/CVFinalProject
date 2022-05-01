@@ -18,6 +18,7 @@ class Mode(Enum):
 
 
 mode = Mode.NORMAL
+counter = 0
 
 # draws rectangles in given color around detected features in given frame
 def drawFeatures(frame, features, color):
@@ -64,6 +65,7 @@ def main(argv):
 
     # reference global variable
     global mode
+    global counter
 
     # load pre-trained classifier from OpenCV directory (https://github.com/opencv/opencv/tree/master/data/haarcascades)
     faceCascade = cv.CascadeClassifier(
@@ -73,7 +75,7 @@ def main(argv):
     smileCascade = cv.CascadeClassifier("cascades/haarcascade_smile.xml")
 
     # load filter
-    filter, ori_filter_h, ori_filter_w, mask, mask_inv = loadFilter()
+    filter, ori_filter_h, ori_filter_w, mask, mask_inv = loadFilters()
 
     # used for saving images
     userID = ""
@@ -95,7 +97,6 @@ def main(argv):
         # finds features // note: scale factors, min neighbors, and min size may need
         #                // adjustment to optimize detection
         faces = faceCascade.detectMultiScale(grayFrame, scaleFactor=1.3,
-
                                              minNeighbors=5, minSize=(30, 30))
         eyes = findFeatures(grayFrame, faces, eyeCascade, scaleFactor=1.3,
                             minNeighbors=3, minSize=(3, 3))
@@ -105,10 +106,13 @@ def main(argv):
         # key commands
         key = cv.waitKey(1)
 
-        if key == ord('f'):
-            mode = Mode.FILTER
         if key == ord('n'):
             mode = Mode.NORMAL
+        if key == ord('f'):
+            mode = Mode.FILTER
+        if key == ord('u'):
+            counter = counter + 1
+            mode = Mode.FILTER
 
         # draws features on frame
         if len(faces) > 0 and mode == Mode.NORMAL:
