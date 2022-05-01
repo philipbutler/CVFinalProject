@@ -1,4 +1,4 @@
-# Erica Shepherd
+# Erica Shepherd, Jiapei Li
 # CS 5330
 # Final Project
 # LBPH Face Recognition

@@ -1,3 +1,8 @@
+# Jiapei Li
+# CS 5330
+# Final Project
+# Visualization
+
 # import statements
 import cv2 as cv
 import glob
@@ -5,7 +10,6 @@ import glob
 # initial filter parameters
 # filter_path = 'filters/witch.png'
 # filter_path = 'filters/pikachu_filter.png'
-
 
 # filter class
 class Filter:
@@ -89,7 +93,8 @@ def applyFilter(frame, faces, filters, counter):
         filter_height = int(filter_width * (ori_filter_h / ori_filter_w))
 
         # switch case
-        width_factor, height_factor = getFilterParameters(counter % len(filters))
+        width_factor, height_factor = getFilterParameters(
+            counter % len(filters))
 
         # get center of face, deducted by half of filter width
         filter_x1 = face_x2 - int(face_w / 2) - \
