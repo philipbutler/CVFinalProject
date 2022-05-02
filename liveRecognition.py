@@ -162,14 +162,14 @@ def main():
                     cv.putText(frame, str(name[id]), (x + 5, y - 5), fontFace=cv.FONT_HERSHEY_SIMPLEX,
                            fontScale=1, color=(255, 255, 255), thickness=2)
 
-            # Select the filter based on the identified person
-            filter_label = name2label[name[id]]
-            gif = filterMap[filter_label].gif
+                # Select the filter based on the identified person
+                filter_label = name2label[name[id]]
+                gif = filterMap[filter_label].gif
 
-            if len(faces) > 0 and filter_mode:
-                filters.applyFilter(frame, faces, filterMap[filter_label])
-                gifIdx = (gifIdx + 1) % len(gif)
-                frame = markers.detectAndShowMarkers(frame, dictionary, gif[gifIdx]).astype(np.uint8)
+                if len(faces) > 0 and filter_mode:
+                    filters.applyFilter(frame, faces, filterMap[filter_label])
+                    gifIdx = (gifIdx + 1) % len(gif)
+                    frame = markers.detectAndShowMarkers(frame, dictionary, gif[gifIdx]).astype(np.uint8)
 
         cv.imshow("Video", frame)
 
