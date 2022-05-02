@@ -63,6 +63,10 @@ def main(argv):
     dictionary = cv.aruco.Dictionary_get(cv.aruco.DICT_6X6_250)
     image_src = cv.imread("./filters/image_source.jpg")
 
+    # load GIF
+    gifIdx = 0
+    image_srcs = loadGif("./filters/gif_source.gif")
+
     # video stream, quits if user presses q
     key = cv.waitKey(1)
     while key != ord('q'):
@@ -106,7 +110,8 @@ def main(argv):
         if len(faces) > 0 and mode == Mode.FILTER:
             applyFilter(frame, faces, filters, counter)
 
-        frame_new = detectAndShowMarkers(frame, dictionary, image_src)
+        gifIdx = (gifIdx + 1) % len(image_srcs)
+        frame_new = detectAndShowMarkers(frame, dictionary, image_srcs[gifIdx])
 
         cv.imshow("Video", frame_new.astype(np.uint8))
 
