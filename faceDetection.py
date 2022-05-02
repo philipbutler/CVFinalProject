@@ -37,6 +37,13 @@ def checkDirectory(path):
         os.makedirs(path)
         print("Creating", path)
 
+# load and return pre-trained classifier from OpenCV directory (https://github.com/opencv/opencv/tree/master/data/haarcascades)
+def loadCascades():
+    faceCascade = cv.CascadeClassifier("cascades/haarcascade_frontalface_default.xml")
+    eyeCascade = cv.CascadeClassifier("cascades/haarcascade_eye_tree_eyeglasses.xml")
+    smileCascade = cv.CascadeClassifier("cascades/haarcascade_smile.xml")
+    return faceCascade, eyeCascade, smileCascade
+
 # main function
 def main():
     capdev = cv.VideoCapture(0, cv.CAP_DSHOW)
@@ -45,10 +52,8 @@ def main():
         print("Error: unable to open camera")
         exit()
 
-    # load pre-trained classifier from OpenCV directory (https://github.com/opencv/opencv/tree/master/data/haarcascades)
-    faceCascade = cv.CascadeClassifier("cascades/haarcascade_frontalface_default.xml")
-    eyeCascade = cv.CascadeClassifier("cascades/haarcascade_eye_tree_eyeglasses.xml")
-    smileCascade = cv.CascadeClassifier("cascades/haarcascade_smile.xml")
+    # load cascades
+    faceCascade, eyeCascade, smileCascade = loadCascades()
 
     # used for saving images
     userID = ""

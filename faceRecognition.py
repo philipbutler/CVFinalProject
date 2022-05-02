@@ -1,4 +1,4 @@
-# Erica Shepherd, Jiapei Li
+# Erica Shepherd
 # CS 5330
 # Final Project
 # LBPH Face Recognition
@@ -30,21 +30,48 @@ def testModel(recognizer, testData):
     accuracy = (correct / totalCount) * 100
     return accuracy
 
+# reads and returns saved opencv models
+def loadModels(path):
+    LBPHrecognizer = cv.face.LBPHFaceRecognizer_create()
+    LBPHrecognizer.read(path + "LBPHmodel.xml")
+
+    eigenfaces = cv.face.EigenFaceRecognizer_create()
+    eigenfaces.read(path + "eigenfacesModel.xml")
+
+    fisherfaces = cv.face.FisherFaceRecognizer_create()
+    fisherfaces.read(path + "fisherfacesModel.xml")
+
+    return LBPHrecognizer, eigenfaces, fisherfaces
+
 # main function
 def main():
     # loads in training and test data
     trainData, testData = loadData("processedData/")
 
-    # create and train network
-    recognizer = cv.face.LBPHFaceRecognizer_create() # if not installed already, run the command (python -m pip install --user opencv-contrib-python)
-    recognizer.train(trainData["train_data"], trainData["train_label"])
+    # create and train recognizers
+    # LBPH recognizer
+    LBPHrecognizer = cv.face.LBPHFaceRecognizer_create() # if not installed already, run the command (python -m pip install --user opencv-contrib-python)
+    LBPHrecognizer.train(trainData["train_data"], trainData["train_label"])
+    # eigenfaces
+    eigenfaces = cv.face.EigenFaceRecognizer_create()
+    eigenfaces.train(trainData["train_data"], trainData["train_label"])
+    # fisherfaces
+    fisherfaces = cv.face.FisherFaceRecognizer_create()
+    fisherfaces.train(trainData["train_data"], trainData["train_label"])
 
-    # saves network
-    recognizer.write("LBPHmodel.xml")
+    # saves models
+    path = "opencvModels/"
+    LBPHrecognizer.write(path + "LBPHmodel.xml")
+    eigenfaces.write(path + "eigenfacesModel.xml")
+    fisherfaces.write(path + "fisherfacesModel.xml")
 
-    # tests and prints accuracy
-    accuracy = testModel(recognizer, testData)
-    print("{:.2f}%".format(accuracy))
+    # tests and prints accuracies on test data
+    LBPHaccuracy = testModel(LBPHrecognizer, testData)
+    eigenfacesAccuracy = testModel(eigenfaces, testData)
+    fisherfacesAccuracy = testModel(fisherfaces, testData)
+    print("LBPH algorithm: {:.2f}%".format(LBPHaccuracy))
+    print("Eigenfaces: {:.2f}%".format(eigenfacesAccuracy))
+    print("Fisherfaces: {:.2f}%".format(fisherfacesAccuracy))
 
     return
 
