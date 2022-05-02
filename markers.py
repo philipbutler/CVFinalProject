@@ -9,6 +9,7 @@ import cv2 as cv
 import glob
 import numpy as np
 from PIL import Image
+from pathlib import Path
 
 
 CACHE_PTS = None
@@ -152,19 +153,26 @@ def loadCameraCalibrationInfo(filename, cameraMatrix, coeffs):
 # load GIF to image array
 # Reference - Convert image from PIL to openCV format
 # https://stackoverflow.com/questions/14134892/convert-image-from-pil-to-opencv-format
-def loadGif(path):
-    image_srcs = []
-    im = Image.open(path)
-    try:
-        for index in range(im.n_frames):
-            im.seek(index)
-            # cannot be directly converted to BGR
-            tmp = im.convert("RGB")
-            a = np.array(tmp)
-            a = cv.cvtColor(a, cv.COLOR_RGB2BGR)
-            image_srcs.append(a)
+def loadGifsToMap(filterMap):
+    gif_dir = glob.glob('filters/*.gif')
 
-    except EOFError:
-        pass
+    for path in gif_dir:
+        gif_name = Path(path).name.split('.')[0].split('_')[0]
+        gif_frames = []
 
-    return image_srcs
+        # image_srcs = []
+        im = Image.open(path)
+        try:
+            for index in range(im.n_frames):
+                im.seek(index)
+                # cannot be directly converted to BGR
+                tmp = im.convert("RGB")
+                a = np.array(tmp)
+                a = cv.cvtColor(a, cv.COLOR_RGB2BGR)
+                gif_frames.append(a)
+
+        except EOFError:
+            pass
+
+        # assign
+        filterMap[gif_name].gif = gif_frames

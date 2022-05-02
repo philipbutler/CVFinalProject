@@ -7,6 +7,7 @@
 import cv2 as cv
 import glob
 import numpy as np
+from pathlib import Path
 
 # initial filter parameters
 # filter_path = 'filters/witch.png'
@@ -15,25 +16,27 @@ import numpy as np
 
 # filter class
 class Filter:
-    def __init__(self, filter, ori_filter_h, ori_filter_w, mask, mask_inv) -> None:
+    def __init__(self, label, filter, ori_filter_h, ori_filter_w, mask, mask_inv) -> None:
+        self.label = label
         self.filter = filter
         self.ori_filter_h = ori_filter_h
         self.ori_filter_w = ori_filter_w
         self.mask = mask
         self.mask_inv = mask_inv
+        self.gif = None
 
     # getters
     def getFilterPackage(self):
         return self.filter, self.ori_filter_h, self.ori_filter_w, self.mask, self.mask_inv
 
 # switch case to get specific height and width parameters for filters
-def getFilterParameters(classifer):
-    match classifer:
+def getFilterParameters(label):
+    match label:
         # pikachu
-        case 0:
+        case 'pikachu':
             return 1.82, 0.4
         # witch
-        case 1:
+        case 'witch':
             return 2.0, 1.3
         case _:
             return 1.82, 0.4
@@ -41,9 +44,10 @@ def getFilterParameters(classifer):
 # load filter and get masks
 def loadFilters():
     filter_dir = glob.glob('filters/*.png')
-    filters = []
+    filterMap = {}
 
     for filter_path in filter_dir:
+        filter_name = Path(filter_path).name.split('.')[0]
         filter = cv.imread(filter_path)
         filter_unchanged = cv.imread(filter_path, cv.IMREAD_UNCHANGED)
 
@@ -65,17 +69,16 @@ def loadFilters():
         # cv.imshow("mask", mask)
         # cv.imshow("inv", mask_inv)
 
-        filter_curr = Filter(filter, ori_filter_h,
-                             ori_filter_w, mask, mask_inv)
-        filters.append(filter_curr)
+        filter_curr = Filter(filter_name, filter,
+                             ori_filter_h, ori_filter_w, mask, mask_inv)
+        filterMap[filter_name] = filter_curr
 
-    return filters
+    return filterMap
 
 
 # apply filter to face region
-def applyFilter(frame, faces, filters, counter):
+def applyFilter(frame, faces, curr_filter, counter):
     # getters
-    curr_filter = filters[counter % len(filters)]
     filter, ori_filter_h, ori_filter_w, mask, mask_inv = curr_filter.getFilterPackage()
 
     # loop through every face found
@@ -94,8 +97,7 @@ def applyFilter(frame, faces, filters, counter):
         filter_height = int(filter_width * (ori_filter_h / ori_filter_w))
 
         # switch case
-        width_factor, height_factor = getFilterParameters(
-            counter % len(filters))
+        width_factor, height_factor = getFilterParameters(curr_filter.label)
 
         # get center of face, deducted by half of filter width
         filter_x1 = face_x2 - int(face_w / 2) - \

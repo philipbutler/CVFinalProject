@@ -50,8 +50,8 @@ def main(argv):
     global counter
 
     # load filter
-    filters = loadFilters()
-    print(len(filters))
+    filterMap = loadFilters()
+    print(str(len(filterMap)) + " filters are loaded")
 
     # load camera calibration file
     cameraMatrix = np.arange(9, dtype=np.double).reshape(3, 3)
@@ -65,7 +65,7 @@ def main(argv):
 
     # load GIF
     gifIdx = 0
-    image_srcs = loadGif("./filters/gif_source.gif")
+    image_srcs = loadGifsToMap(filterMap)
 
     # video stream, quits if user presses q
     key = cv.waitKey(1)
@@ -106,12 +106,17 @@ def main(argv):
             fd.drawFeatures(frame, eyes, (0, 255, 0))
             fd.drawFeatures(frame, smile, (0, 0, 255))
 
+        person_label = 'jp'
+        filter_label = 'pikachu'
+        gif = filterMap[filter_label].gif
+
         # switch to filter mode
         if len(faces) > 0 and mode == Mode.FILTER:
-            applyFilter(frame, faces, filters, counter)
+            applyFilter(frame, faces, filterMap[filter_label], counter)
 
-        gifIdx = (gifIdx + 1) % len(image_srcs)
-        frame_new = detectAndShowMarkers(frame, dictionary, image_srcs[gifIdx])
+        gifIdx = (gifIdx + 1) % len(gif)
+        frame_new = detectAndShowMarkers(
+            frame, dictionary, gif[gifIdx])
 
         cv.imshow("Video", frame_new.astype(np.uint8))
 
