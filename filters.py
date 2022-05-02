@@ -31,20 +31,21 @@ class Filter:
 
 # switch case to get specific height and width parameters for filters
 def getFilterParameters(label):
-    match label:
-        # pikachu
-        case 'pikachu':
-            return 1.82, 0.4
+    if label == 'pikachu':
+        return 1.82, 0.4
         # witch
-        case 'witch':
-            return 2.0, 1.3
-        case _:
-            return 1.82, 0.4
+    elif label == 'witch':
+        return 2.0, 1.3
+    else:
+        return 1.82, 0.4
 
 
 # person name to filter label
 def loadPersonNameToLabel():
     nameToLabel = {}
+    nameToLabel['changline'] = 'pikachu'
+    nameToLabel['phil'] = 'pikachu'
+    nameToLabel['erica'] = 'pikachu'
     nameToLabel['jp'] = 'pikachu'
     nameToLabel['unknown'] = 'witch'
 
@@ -86,7 +87,7 @@ def loadFilters():
 
 
 # apply filter to face region
-def applyFilter(frame, faces, curr_filter, counter):
+def applyFilter(frame, faces, curr_filter):
     # getters
     filter, ori_filter_h, ori_filter_w, mask, mask_inv = curr_filter.getFilterPackage()
 
