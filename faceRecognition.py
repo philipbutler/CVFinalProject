@@ -1,7 +1,7 @@
 # Erica Shepherd
 # CS 5330
 # Final Project
-# LBPH Face Recognition
+# LBPH/Eigenfaces/Fisherfaces Face Recognition
 
 # import statements 
 import cv2 as cv
