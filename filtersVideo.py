@@ -25,6 +25,7 @@ class Mode(Enum):
 
 mode = Mode.NORMAL
 counter = 0
+person_name = 'unknown'
 
 # main function
 def main(argv):
@@ -48,6 +49,10 @@ def main(argv):
     # reference global variable
     global mode
     global counter
+    global person_name
+
+    # load person name to filter map
+    name2label = loadPersonNameToLabel()
 
     # load filter
     filterMap = loadFilters()
@@ -106,8 +111,11 @@ def main(argv):
             fd.drawFeatures(frame, eyes, (0, 255, 0))
             fd.drawFeatures(frame, smile, (0, 0, 255))
 
+        # TODO: get person's label from network
+        # if person_label == 'unknown' then predict; otherwise use same
+
         person_label = 'jp'
-        filter_label = 'pikachu'
+        filter_label = name2label[person_name]
         gif = filterMap[filter_label].gif
 
         # switch to filter mode

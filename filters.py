@@ -41,6 +41,15 @@ def getFilterParameters(label):
         case _:
             return 1.82, 0.4
 
+
+# person name to filter label
+def loadPersonNameToLabel():
+    nameToLabel = {}
+    nameToLabel['jp'] = 'pikachu'
+    nameToLabel['unknown'] = 'witch'
+
+    return nameToLabel
+
 # load filter and get masks
 def loadFilters():
     filter_dir = glob.glob('filters/*.png')
