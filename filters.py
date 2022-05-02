@@ -43,7 +43,7 @@ def getFilterParameters(label):
 # person name to filter label
 def loadPersonNameToLabel():
     nameToLabel = {}
-    nameToLabel['changline'] = 'pikachu'
+    nameToLabel['changling'] = 'pikachu'
     nameToLabel['phil'] = 'pikachu'
     nameToLabel['erica'] = 'pikachu'
     nameToLabel['jp'] = 'pikachu'

@@ -1,4 +1,4 @@
-# Erica Shepherd, 
+# Erica Shepherd, Changling Li, Phil Butler
 # CS 5330
 # Final Project
 # Live Face Recognition
@@ -41,9 +41,7 @@ def main():
     LBPHrecognizer, eigenfaces, fisherfaces = fr.loadModels("opencvModels/")
 
     # keeps track of pause, recognition, filter modes
-    pause = False
-    draw_box = False
-    filter_mode = False
+    pause, draw_box, filter_mode, display_name = False, False, False, True
     recognition_mode = 0
 
     # load name to filter map
@@ -60,7 +58,7 @@ def main():
     dictionary = cv.aruco.Dictionary_get(cv.aruco.DICT_6X6_250)
 
     # video stream
-    while 1:
+    while True:
         # captures frame if stream not paused
         if not pause:
             ret, frame = capdev.read()
@@ -90,11 +88,13 @@ def main():
         elif key == ord('q'):
             break
 
-        # turn off drawing, recognition, & filters
+        # reset everything (turn off drawing, recognition, & filters, turn on displaying name)
         if key == ord('0'):
             recognition_mode = 0
-            filter_mode = False
-            draw_box = False
+            pause, draw_box, filter_mode, display_name = False, False, False, True
+        # toggle displaying name if in a recognition mode
+        elif key == ord('n'):
+            display_name = not display_name
         # toggle drawing blue face box
         elif key == ord('b'):
             draw_box = not draw_box
@@ -119,6 +119,7 @@ def main():
         # toggle filters
         elif key == ord('f'):
             filter_mode = not filter_mode
+            display_name = not filter_mode
 
         # modes
         if draw_box:
@@ -131,7 +132,7 @@ def main():
             fd.drawFeatures(frame, smile, (0, 0, 255))
 
         elif recognition_mode > 1:
-            if faces.any():
+            if len(faces) > 0:
                 x, y, w, h = faces[0]
                 # LBPH recognition
                 if recognition_mode == 2:
@@ -157,7 +158,8 @@ def main():
                     input_features = input_features.tolist()[0]
                     current_error = net.SSD_list(input_features, data_list)
                     id = net.KNN(current_error, label_list, 5)
-                cv.putText(frame, str(name[id]), (x + 5, y - 5), fontFace=cv.FONT_HERSHEY_SIMPLEX,
+                if display_name:
+                    cv.putText(frame, str(name[id]), (x + 5, y - 5), fontFace=cv.FONT_HERSHEY_SIMPLEX,
                            fontScale=1, color=(255, 255, 255), thickness=2)
 
             # Select the filter based on the identified person
