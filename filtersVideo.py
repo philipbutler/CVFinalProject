@@ -7,10 +7,13 @@
 from statistics import mode
 import cv2 as cv
 import sys
+
+from numpy import dtype
 import FaceNetwork
 from enum import Enum
 from filters import *
 import faceDetection as fd
+import numpy as np
 
 class Mode(Enum):
     NORMAL = 1
@@ -33,8 +36,10 @@ def main(argv):
         exit()
 
     # load pre-trained classifier from OpenCV directory (https://github.com/opencv/opencv/tree/master/data/haarcascades)
-    faceCascade = cv.CascadeClassifier("cascades/haarcascade_frontalface_default.xml")
-    eyeCascade = cv.CascadeClassifier("cascades/haarcascade_eye_tree_eyeglasses.xml")
+    faceCascade = cv.CascadeClassifier(
+        "cascades/haarcascade_frontalface_default.xml")
+    eyeCascade = cv.CascadeClassifier(
+        "cascades/haarcascade_eye_tree_eyeglasses.xml")
     smileCascade = cv.CascadeClassifier("cascades/haarcascade_smile.xml")
 
     # reference global variable
@@ -47,6 +52,12 @@ def main(argv):
     cv.imshow("1", filters[0].filter)
     cv.imshow("2", filters[1].filter)
 
+    # load camera calibration file
+    cameraMatrix = np.arange(9, dtype=np.double).reshape(3, 3)
+    coeffs = np.arange(5, dtype=np.double)
+    loadCameraCalibrationInfo(
+        "./calibration/jp_calibration.txt", cameraMatrix, coeffs)
+
     # video stream, quits if user presses q
     key = cv.waitKey(1)
     while key != ord('q'):
@@ -56,7 +67,7 @@ def main(argv):
         # ret checks for correct frame read
         if ret is not True:
             print("Error: frame not read correctly")
-            exit()    
+            exit()
 
         grayFrame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
@@ -65,9 +76,9 @@ def main(argv):
         faces = faceCascade.detectMultiScale(grayFrame, scaleFactor=1.3,
                                              minNeighbors=5, minSize=(30, 30))
         eyes = fd.findFeatures(grayFrame, faces, eyeCascade, scaleFactor=1.3,
-                            minNeighbors=3, minSize=(3, 3))
+                               minNeighbors=3, minSize=(3, 3))
         smile = fd.findFeatures(grayFrame, faces, smileCascade, scaleFactor=2,
-                             minNeighbors=30, minSize=(50, 50))
+                                minNeighbors=30, minSize=(50, 50))
 
         # key commands
         key = cv.waitKey(1)
@@ -89,6 +100,8 @@ def main(argv):
         # switch to filter mode
         if len(faces) > 0 and mode == Mode.FILTER:
             applyFilter(frame, faces, filters, counter)
+
+        detectAndShowMarkers(frame)
 
         cv.imshow("Video", frame)
 

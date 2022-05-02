@@ -6,6 +6,7 @@
 # import statements
 import cv2 as cv
 import glob
+import numpy as np
 
 # initial filter parameters
 # filter_path = 'filters/witch.png'
@@ -35,7 +36,6 @@ def getFilterParameters(classifer):
             return 2.0, 1.3
         case _:
             return 1.82, 0.4
-
 
 # load filter and get masks
 def loadFilters():
@@ -138,3 +138,39 @@ def applyFilter(frame, faces, filters, counter):
 
         # project to frame
         frame[filter_y1:filter_y2, filter_x1:filter_x2] = ret
+
+# detect Aruco Markers
+def detectAndShowMarkers(frame):
+    dictionary = cv.aruco.Dictionary_get(cv.aruco.DICT_6X6_250)
+
+    # initiate the detector parameters
+    parameters = cv.aruco.DetectorParameters_create()
+
+    # detect the markers in the image
+    markerCorners, markerIds, rejectedCandidates = cv.aruco.detectMarkers(
+        frame, dictionary, parameters=parameters)
+
+    cv.aruco.drawDetectedMarkers(frame, markerCorners, markerIds)
+
+# load camera calibration info
+# Reference - https://stackoverflow.com/questions/35578405/python-how-to-read-line-by-line-in-a-numpy-array
+def loadCameraCalibrationInfo(filename, cameraMatrix, coeffs):
+    print("\nloading co-efficients info...")
+    with open(filename) as f:
+        r = 0
+        for line in f:
+            if r <= 2:
+                nums = line.split(' ')
+                for c in range(0, 3):
+                    cameraMatrix[r, c] = nums[c]
+            else:
+                coeffs = np.fromstring(line, dtype=np.double, sep=' ')
+            r = r + 1
+
+    if len(coeffs) > 0:
+        print("Successfully loaded camera calibration info.")
+        print(cameraMatrix)
+        print(coeffs)
+    else:
+        print("Failed loading camera calibration info.")
+        exit()
