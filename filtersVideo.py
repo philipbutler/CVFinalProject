@@ -114,7 +114,7 @@ def main(argv):
         # TODO: get person's label from network
         # if person_label == 'unknown' then predict; otherwise use same
 
-        person_label = 'jp'
+        person_name = 'jp'
         filter_label = name2label[person_name]
         gif = filterMap[filter_label].gif
 
