@@ -10,8 +10,7 @@ import numpy as np
 from pathlib import Path
 
 # initial filter parameters
-# filter_path = 'filters/witch.png'
-# filter_path = 'filters/pikachu_filter.png'
+png_path = 'filters/*.png'
 
 
 # filter class
@@ -31,14 +30,17 @@ class Filter:
 
 # switch case to get specific height and width parameters for filters
 def getFilterParameters(label):
+    # pikachu
     if label == 'pikachu':
         return 1.82, 0.4
-        # witch
+    # witch
     elif label == 'witch':
         return 2.0, 1.3
+    # charmander
+    elif label == 'charmander':
+        return 2.0, 0.4
     else:
         return 1.82, 0.4
-
 
 # person name to filter label
 def loadPersonNameToLabel():
@@ -53,7 +55,7 @@ def loadPersonNameToLabel():
 
 # load filter and get masks
 def loadFilters():
-    filter_dir = glob.glob('filters/*.png')
+    filter_dir = glob.glob(png_path)
     filterMap = {}
 
     for filter_path in filter_dir:
