@@ -201,6 +201,9 @@ def main(argv):
     filepath = 'processedData/'
     train_loader, test_loader = load_data(filepath)
 
+    if len(argv) < 2:
+        print("User message: <argument>")
+
     if argv[1] == "train":
         # create the network
         network = CNN()
@@ -219,6 +222,13 @@ def main(argv):
         plt.ylim([0, 1])
         plt.legend(loc='lower right')
         plt.show()
+    if argv[1] == "CNN_predict":
+        model = load_model('CNN.h5')
+        img = cv2.imread('dataset/changling/99.jpg')
+        processed_img = img_process(img, (101, 101))
+        input_img = processed_img.reshape((1, 101, 101, 1))
+        prediction = model.predict(input_img).argmax(axis=-1)[0]
+        print("the prediction is ", prediction)
 
     # write the KNN features and create the feature space
     if argv[1] == "KNN":
@@ -236,6 +246,15 @@ def main(argv):
 
         model = load_model('CNN.h5')
         layer_name = 'dense_1'
+
+        # img = cv2.imread('dataset/changling/99.jpg')
+        # processed_img = img_process(img, (101, 101))
+        # input_img = processed_img.reshape((1, 101, 101, 1))
+        # input_features = feature_calculate(input_img, model, layer_name)
+        # input_features = input_features.tolist()[0]
+        # current_error = SSD_list(input_features, data_list)
+        # prediction = KNN(current_error, label_list, 5)
+        # print(prediction)
 
         test_features = feature_calculate(test_data, model, layer_name)
         test_features = test_features.tolist()
