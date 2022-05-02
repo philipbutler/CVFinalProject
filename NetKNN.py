@@ -27,6 +27,7 @@ def load_data(filepath):
     test_loader = np.load(filepath + "test_data.npz")
     return train_loader, test_loader
 
+
 # CNN network class
 class CNN():
     def __init__(self):
@@ -91,6 +92,13 @@ def img_process(img, size):
     return grey_img
 
 
+def feature_calculate(train_data, model, layer_name):
+    intermediate_layer_model = Model(inputs=model.input,
+                                     outputs=model.get_layer(layer_name).output)
+    intermediate_output = intermediate_layer_model.predict(train_data)
+    return intermediate_output
+
+
 # load the images, scale down, convert to grey scale and invert the intensities and save to csv
 def write_data(train_loader, model, layer_name):
     """
@@ -100,18 +108,88 @@ def write_data(train_loader, model, layer_name):
     :return:
         None
     """
-    train_data = train_loader["train_data"]
     train_label = train_loader["train_label"].astype(int)
+    train_data = train_loader["train_data"]
 
-    intermediate_layer_model = Model(inputs=model.input,
-                                     outputs=model.get_layer(layer_name).output)
-    intermediate_output = intermediate_layer_model.predict(train_data)
+    intermediate_output = feature_calculate(train_data, model, layer_name)
 
     np.savetxt('data.csv', intermediate_output, delimiter=',')
     np.savetxt('label.csv', train_label, delimiter=',')
 
     print(intermediate_output.shape)
     return
+
+
+# load the csv data file and reshape, load the label file
+def load_csv(datafile, labelfile):
+    """
+    :param datafile: str, data csv file name
+    :param labelfile: str, label csv file name
+    :return:
+        data_list: list, data list
+        label_list: list, label list
+    """
+    # read the data file and reshape each rule to 28x28 and save to a list
+    data_list = []
+    with open(datafile, "r") as f1:
+        data_reader = csv.reader(f1, quoting=csv.QUOTE_NONNUMERIC)
+        for row in data_reader:
+            data_list.append(row)
+    # read the label file and save to a list
+    label_list = []
+    with open(labelfile, "r") as f2:
+        label_reader = csv.reader(f2, quoting=csv.QUOTE_NONNUMERIC)
+        for row in label_reader:
+            label_list.append(int(row[0]))
+
+    return data_list, label_list
+
+
+# compute the sum squared distance
+def SSD(list_a, list_b):
+    """
+    :param list_a: list
+    :param list_b: list
+    :return:
+        error: int, ssd error
+    """
+    error = 0
+    for i in range(len(list_a)):
+        error += (list_a[i] - list_b[i]) ** 2
+    return error
+
+
+# compute all the SSD and save to a list
+def SSD_list(list_a, all_list):
+    """
+    :param list_a: list
+    :param all_list: list
+    :return:
+        error_list: list, all ssd list
+    """
+    error_list = []
+    for list in all_list:
+        error = SSD(list_a, list)
+        error_list.append(error)
+    return error_list
+
+
+# K-NN classifier
+def KNN(error_list, labels, K, drop_first=False):
+    """
+    :param error_list: list
+    :param labels: list
+    :param K: int, top K neighbors
+    :param drop_first:
+    :return:
+        int, the index for the label
+    """
+    error_list, labels = (list(t) for t in zip(*sorted(zip(error_list, labels))))
+    if drop_first:
+        new_labels = labels[1:K + 1]
+    else:
+        new_labels = labels[0:K]
+    return max(set(new_labels), key=new_labels.count)
 
 
 # main function
@@ -148,6 +226,30 @@ def main(argv):
         layer_name = 'dense_1'
         write_data(train_loader, model, layer_name)
 
+    # evaluate the performance of the KNN classification
+    if argv[1] == "KNN_evaluation":
+        train_data_path = 'data.csv'
+        train_label_path = 'label.csv'
+        data_list, label_list = load_csv(train_data_path, train_label_path)
+        test_label = test_loader['test_label']
+        test_data = test_loader['test_data']
+
+        model = load_model('CNN.h5')
+        layer_name = 'dense_1'
+
+        test_features = feature_calculate(test_data, model, layer_name)
+        test_features = test_features.tolist()
+        predictions = []
+        for data in test_features:
+            current_error = SSD_list(data, data_list)
+            prediction = KNN(current_error, label_list, 5)
+            predictions.append(prediction)
+        print("the length of the predication list is ", len(predictions))
+        predictions = np.array(predictions)
+
+        num_accurate_prediction = np.sum(predictions == test_label)
+
+        print("KNN accuracy on test set is ", num_accurate_prediction/test_label.shape[0])
     return
 
 
