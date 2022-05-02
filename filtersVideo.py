@@ -5,6 +5,7 @@
 
 # import statements
 from statistics import mode
+from tkinter.ttk import Frame
 import cv2 as cv
 import sys
 
@@ -49,14 +50,16 @@ def main(argv):
     # load filter
     filters = loadFilters()
     print(len(filters))
-    cv.imshow("1", filters[0].filter)
-    cv.imshow("2", filters[1].filter)
 
     # load camera calibration file
     cameraMatrix = np.arange(9, dtype=np.double).reshape(3, 3)
     coeffs = np.arange(5, dtype=np.double)
-    loadCameraCalibrationInfo(
-        "./calibration/jp_calibration.txt", cameraMatrix, coeffs)
+    # loadCameraCalibrationInfo(
+    #     "./calibration/jp_calibration.txt", cameraMatrix, coeffs)
+
+    # load source image
+    dictionary = cv.aruco.Dictionary_get(cv.aruco.DICT_6X6_250)
+    image_src = cv.imread("./filters/image_source.jpg")
 
     # video stream, quits if user presses q
     key = cv.waitKey(1)
@@ -101,9 +104,9 @@ def main(argv):
         if len(faces) > 0 and mode == Mode.FILTER:
             applyFilter(frame, faces, filters, counter)
 
-        detectAndShowMarkers(frame)
+        frame_new = detectAndShowMarkers(frame, dictionary, image_src)
 
-        cv.imshow("Video", frame)
+        cv.imshow("Video", frame_new.astype(np.uint8))
 
     # end video stream
     capdev.release()
