@@ -1,4 +1,4 @@
-# Erica Shepherd, Changling Li, Phil Butler
+# Erica Shepherd, Changling Li, Phil Butler, Jiapei Li
 # CS 5330
 # Final Project
 # Live Face Recognition

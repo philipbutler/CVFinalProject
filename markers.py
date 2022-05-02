@@ -11,7 +11,7 @@ import numpy as np
 from PIL import Image
 from pathlib import Path
 
-
+gif_path = 'filters/*.gif'
 CACHE_PTS = None
 
 # helper method to get new destination points or CACHED points
@@ -154,7 +154,7 @@ def loadCameraCalibrationInfo(filename, cameraMatrix, coeffs):
 # Reference - Convert image from PIL to openCV format
 # https://stackoverflow.com/questions/14134892/convert-image-from-pil-to-opencv-format
 def loadGifsToMap(filterMap):
-    gif_dir = glob.glob('filters/*.gif')
+    gif_dir = glob.glob(gif_path)
 
     for path in gif_dir:
         gif_name = Path(path).name.split('.')[0].split('_')[0]
