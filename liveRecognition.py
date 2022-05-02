@@ -18,7 +18,7 @@ import markers
 
 # main function
 def main():
-    capdev = cv.VideoCapture(1)
+    capdev = cv.VideoCapture(0)
 
     if not capdev.isOpened():
         print("Error: unable to open camera")
@@ -173,7 +173,7 @@ def main():
 
         cv.imshow("Video", frame)
 
-        # end video stream
+    # end video stream
     capdev.release()
     cv.destroyAllWindows()
 
