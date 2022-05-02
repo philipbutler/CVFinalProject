@@ -122,11 +122,10 @@ def main(argv):
         if len(faces) > 0 and mode == Mode.FILTER:
             applyFilter(frame, faces, filterMap[filter_label], counter)
 
-        gifIdx = (gifIdx + 1) % len(gif)
-        frame_new = detectAndShowMarkers(
-            frame, dictionary, gif[gifIdx])
+            gifIdx = (gifIdx + 1) % len(gif)
+            frame = detectAndShowMarkers(frame, dictionary, gif[gifIdx])
 
-        cv.imshow("Video", frame_new.astype(np.uint8))
+        cv.imshow("Video", frame.astype(np.uint8))
 
     # end video stream
     capdev.release()
