@@ -3,7 +3,7 @@
 # Final Project
 # Live Face Recognition
 
-# import statements 
+# import statements
 import cv2 as cv
 import numpy as np
 import faceDetection as fd
@@ -15,6 +15,7 @@ from keras.models import Model
 
 import filters
 import markers
+
 
 # main function
 def main():
@@ -35,7 +36,7 @@ def main():
     data_list, label_list = net.load_csv(train_data_path, train_label_path)
 
     # labels
-    name = ['changling', 'phil', 'erica', 'jp']
+    name = ['changling', 'phil', 'erica', 'jp', 'unknown']
 
     # create and read in trained models
     LBPHrecognizer, eigenfaces, fisherfaces = fr.loadModels("opencvModels/")
@@ -115,6 +116,9 @@ def main():
         # KNN recognition
         elif key == ord('6'):
             recognition_mode = 6
+        # no recognition - unknown
+        elif key == ord('7'):
+            recognition_mode = 7
 
         # toggle filters
         elif key == ord('f'):
@@ -136,31 +140,39 @@ def main():
                 x, y, w, h = faces[0]
                 # LBPH recognition
                 if recognition_mode == 2:
-                    id, confidence = LBPHrecognizer.predict(grayFrame[y:y + h, x:x + w])
+                    id, confidence = LBPHrecognizer.predict(
+                        grayFrame[y:y + h, x:x + w])
                 # eigenfaces recognition
                 elif recognition_mode == 3:
-                    tempFrame = ip.img_process(frame[y:y + h, x:x + w], (100, 100))
+                    tempFrame = ip.img_process(
+                        frame[y:y + h, x:x + w], (100, 100))
                     id, confidence = eigenfaces.predict(tempFrame)
                 # fisherfaces recognition
                 elif recognition_mode == 4:
-                    tempFrame = ip.img_process(frame[y:y + h, x:x + w], (100, 100))
+                    tempFrame = ip.img_process(
+                        frame[y:y + h, x:x + w], (100, 100))
                     id, confidence = fisherfaces.predict(tempFrame)
                 # CNN face recognition
                 elif recognition_mode == 5:
-                    tempFrame = ip.img_process(frame[y:y + h, x:x + w], (101, 101))
+                    tempFrame = ip.img_process(
+                        frame[y:y + h, x:x + w], (101, 101))
                     input_img = tempFrame.reshape((1, 101, 101, 1))
                     id = CNN_model.predict(input_img).argmax(axis=-1)[0]
                 # KNN face recognition
                 elif recognition_mode == 6:
-                    tempFrame = ip.img_process(frame[y:y + h, x:x + w], (101, 101))
+                    tempFrame = ip.img_process(
+                        frame[y:y + h, x:x + w], (101, 101))
                     input_img = tempFrame.reshape((1, 101, 101, 1))
-                    input_features = net.feature_calculate(input_img, CNN_model, layer_name)
+                    input_features = net.feature_calculate(
+                        input_img, CNN_model, layer_name)
                     input_features = input_features.tolist()[0]
                     current_error = net.SSD_list(input_features, data_list)
                     id = net.KNN(current_error, label_list, 5)
+                elif recognition_mode == 7:
+                    id = 4
                 if display_name:
                     cv.putText(frame, str(name[id]), (x + 5, y - 5), fontFace=cv.FONT_HERSHEY_SIMPLEX,
-                           fontScale=1, color=(255, 255, 255), thickness=2)
+                               fontScale=1, color=(255, 255, 255), thickness=2)
 
                 # Select the filter based on the identified person
                 filter_label = name2label[name[id]]
@@ -169,7 +181,8 @@ def main():
                 if len(faces) > 0 and filter_mode:
                     filters.applyFilter(frame, faces, filterMap[filter_label])
                     gifIdx = (gifIdx + 1) % len(gif)
-                    frame = markers.detectAndShowMarkers(frame, dictionary, gif[gifIdx]).astype(np.uint8)
+                    frame = markers.detectAndShowMarkers(
+                        frame, dictionary, gif[gifIdx]).astype(np.uint8)
 
         cv.imshow("Video", frame)
 
