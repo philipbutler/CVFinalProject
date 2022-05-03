@@ -38,7 +38,7 @@ def getFilterParameters(label):
         return 2.0, 1.3
     # charmander
     elif label == 'charmander':
-        return 2.0, 0.4
+        return 2.0, 0.46
     # kirby
     elif label == 'kirby':
         return 2.24, 0.4
@@ -53,8 +53,8 @@ def loadPersonNameToLabel():
     nameToLabel = {}
     nameToLabel['changling'] = 'jigglypuff'
     nameToLabel['phil'] = 'kirby'
-    nameToLabel['erica'] = 'charmander'
-    nameToLabel['jp'] = 'pikachu'
+    nameToLabel['erica'] = 'pikachu'
+    nameToLabel['jp'] = 'charmander'
     nameToLabel['unknown'] = 'witch'
 
     return nameToLabel
