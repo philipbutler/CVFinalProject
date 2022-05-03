@@ -4,6 +4,7 @@
 # Live Face Recognition
 
 # import statements
+import sys
 import cv2 as cv
 import numpy as np
 import faceDetection as fd
@@ -18,8 +19,16 @@ import markers
 
 
 # main function
-def main():
-    capdev = cv.VideoCapture(0)
+def main(argv):
+    if len(argv) == 0:
+        capdev = cv.VideoCapture(0)
+    if len(argv) == 1:
+        if argv[1] == 'windows':
+            capdev = cv.VideoCapture(0, cv.CAP_DSHOW)
+        elif argv[1] == 'webcam':
+            capdev = cv.VideoCapture(1)
+    else:
+        print("Invalid number of arguments. Expected 0 or 1. See readme.md for details.")
 
     if not capdev.isOpened():
         print("Error: unable to open camera")
@@ -195,4 +204,4 @@ def main():
 
 # runs code only if in file
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
