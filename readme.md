@@ -6,8 +6,9 @@
 ## Machine and Software Specifications
 This code was tested on the following OS:
 - macOS Big Sur v.11.4
-- macOS macOS Monterey v.12.3.1
+- macOS Monterey v.12.3.1
 - Windows 11
+
 and in general should run on any machine with python 3.9 and required modules
 
 ## How to run
@@ -33,7 +34,6 @@ you may need to specify that you still actually want to use your webcam.
 ```sh
 python3 liveRecognition.py webcam
 ```
-##### NetKNN.py
 
 
 ## Controls
