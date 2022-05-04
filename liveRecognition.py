@@ -22,7 +22,7 @@ import markers
 def main(argv):
     if len(argv) == 1:
         capdev = cv.VideoCapture(0)
-    if len(argv) == 2:
+    elif len(argv) == 2:
         if argv[1] == 'windows':
             capdev = cv.VideoCapture(0, cv.CAP_DSHOW)
         elif argv[1] == 'webcam':
