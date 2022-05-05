@@ -13,7 +13,6 @@ import imgProcessing as ip
 import NetKNN as net
 from keras.models import load_model
 from keras.models import Model
-
 import filters
 import markers
 
@@ -108,7 +107,7 @@ def main(argv):
         # toggle drawing blue face box
         elif key == ord('b'):
             draw_box = not draw_box
-        # draws features on frame if user presses d
+        # draws features on frame if user presses 1
         elif key == ord('1'):
             recognition_mode = 1
         # LBPH face recognition mode
@@ -120,6 +119,7 @@ def main(argv):
         # fisherfaces recognition mode
         elif key == ord('4'):
             recognition_mode = 4
+        # CNN recognition
         elif key == ord('5'):
             recognition_mode = 5
         # KNN recognition
@@ -177,6 +177,7 @@ def main(argv):
                     input_features = input_features.tolist()[0]
                     current_error = net.SSD_list(input_features, data_list)
                     id = net.KNN(current_error, label_list, 5)
+                # unknown id
                 elif recognition_mode == 7:
                     id = 4
                 if display_name:

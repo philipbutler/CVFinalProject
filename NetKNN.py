@@ -91,7 +91,7 @@ def img_process(img, size):
     norm_img = cv2.normalize(grey_img, None, 0, 1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
     return grey_img
 
-
+# calculates features
 def feature_calculate(train_data, model, layer_name):
     intermediate_layer_model = Model(inputs=model.input,
                                      outputs=model.get_layer(layer_name).output)
@@ -271,7 +271,7 @@ def main(argv):
         print("KNN accuracy on test set is ", num_accurate_prediction/test_label.shape[0])
     return
 
-
+# runs code only if in file
 if __name__ == '__main__':
     main(sys.argv)
     # mnist()

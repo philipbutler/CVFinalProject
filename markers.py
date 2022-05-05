@@ -11,6 +11,7 @@ import numpy as np
 from PIL import Image
 from pathlib import Path
 
+# global variables
 gif_path = 'filters/*.gif'
 CACHE_PTS = None
 

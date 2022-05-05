@@ -18,11 +18,12 @@ from markers import *
 import faceDetection as fd
 import numpy as np
 
+# mode class
 class Mode(Enum):
     NORMAL = 1
     FILTER = 2
 
-
+# global variables
 mode = Mode.NORMAL
 counter = 0
 person_name = 'unknown'
