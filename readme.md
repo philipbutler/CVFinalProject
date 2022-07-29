@@ -4,7 +4,7 @@
 ### Description
 This project will detect faces and face features such as eyes & mouth. It will identify faces, and apply different filters and/or objects relative to the face dependent on whose face it is (also different actions like smiling may trigger swapping filters). The program will be implemented in Python. We will be experimenting with different algorithms for face detection/recognition and comparing the results. 
 
-### [Presentation & Demo](https://youtu.be/lEFt5HL0Y1Q), [Full Paper](link)
+### [Presentation & Demo](https://youtu.be/lEFt5HL0Y1Q), [Full Paper](https://drive.google.com/file/d/1QdAcXYKpIu3cmwrZCdxToBrYpJiFBC9E/view?usp=sharing)
 
 ## Machine and Software Specifications
 This code was tested on the following OS:
